@@ -1,28 +1,30 @@
 const mysql = require('mysql');
 
-exports.readDB = (limit=20) =>{
 
+
+const _readDB = (limit, callback) =>{
 	const connection = mysql.createConnection({
 		host:'localhost',
 		user:'root',
 		password:'root',
 		database:'world',
+		port:'3306',
 	});
 
 	connection.connect();
 	let dbRes = 'Info Not Found in DB.';
 	const sql = `SELECT * FROM city LIMIT ${limit};`;
-	console.log('sql:', sql);
 	connection.query(sql,(err, result) => {
 		if(err){
-			console.log('[QUERY ERR]：' + err.message);
 			dbRes = err.message;
-			return dbRes;
+			callback(dbRes);
 		}
 		dbRes = result;
-		console.log('dbRes:', dbRes);
-		return dbRes;
+		callback(dbRes);
 	});
+};
+exports.readDB = function(limit=20, callback){
+	return _readDB(limit, callback);
 };
 
 // exports.readDB = readDB();
